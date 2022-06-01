@@ -185,8 +185,8 @@ class BayesianOptimization(Observable):
 
         # Sklearn's GP throws a large number of warnings at times, but
         # we don't really need to see them here.
-        # with warnings.catch_warnings():
-        #    warnings.simplefilter("ignore")
+        with warnings.catch_warnings():
+            warnings.simplefilter("ignore")
         self._gp.fit(self._space.params, self._space.target)
 
         # Finding argmax of the acquisition function.
