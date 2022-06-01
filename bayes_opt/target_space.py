@@ -22,6 +22,7 @@ class TargetSpace(object):
     >>> y = space.register_point(x)
     >>> assert self.max_point()['max_val'] == y
     """
+
     def __init__(self, target_func, pbounds, random_state=None):
         """
         Parameters
@@ -46,7 +47,7 @@ class TargetSpace(object):
         # Create an array with parameters bounds
         self._bounds = np.array(
             [item[1] for item in sorted(pbounds.items(), key=lambda x: x[0])],
-            dtype=np.float
+            dtype=np.float,
         )
 
         # preallocated memory for X and Y points
@@ -54,10 +55,10 @@ class TargetSpace(object):
         self._target = np.empty(shape=(0))
 
         # keep track of unique points we have seen so far
-        self._cache = {}
+        # self._cache = {}
 
-    def __contains__(self, x):
-        return _hashable(x) in self._cache
+    # def __contains__(self, x):
+    #     return _hashable(x) in self._cache
 
     def __len__(self):
         assert len(self._params) == len(self._target)
@@ -92,8 +93,8 @@ class TargetSpace(object):
             assert set(params) == set(self.keys)
         except AssertionError:
             raise ValueError(
-                "Parameters' keys ({}) do ".format(sorted(params)) +
-                "not match the expected set of keys ({}).".format(self.keys)
+                "Parameters' keys ({}) do ".format(sorted(params))
+                + "not match the expected set of keys ({}).".format(self.keys)
             )
         return np.asarray([params[key] for key in self.keys])
 
@@ -102,8 +103,8 @@ class TargetSpace(object):
             assert len(x) == len(self.keys)
         except AssertionError:
             raise ValueError(
-                "Size of array ({}) is different than the ".format(len(x)) +
-                "expected number of parameters ({}).".format(len(self.keys))
+                "Size of array ({}) is different than the ".format(len(x))
+                + "expected number of parameters ({}).".format(len(self.keys))
             )
         return dict(zip(self.keys, x))
 
@@ -118,8 +119,8 @@ class TargetSpace(object):
             assert x.size == self.dim
         except AssertionError:
             raise ValueError(
-                "Size of array ({}) is different than the ".format(len(x)) +
-                "expected number of parameters ({}).".format(len(self.keys))
+                "Size of array ({}) is different than the ".format(len(x))
+                + "expected number of parameters ({}).".format(len(self.keys))
             )
         return x
 
@@ -157,11 +158,11 @@ class TargetSpace(object):
         1
         """
         x = self._as_array(params)
-        if x in self:
-            raise KeyError('Data point {} is not unique'.format(x))
+        # if x in self:
+        #     raise KeyError("Data point {} is not unique".format(x))
 
         # Insert data into unique dictionary
-        self._cache[_hashable(x.ravel())] = target
+        # self._cache[_hashable(x.ravel())] = target
 
         self._params = np.concatenate([self._params, x.reshape(1, -1)])
         self._target = np.concatenate([self._target, [target]])
@@ -187,12 +188,12 @@ class TargetSpace(object):
         """
         x = self._as_array(params)
 
-        try:
-            target = self._cache[_hashable(x)]
-        except KeyError:
-            params = dict(zip(self._keys, x))
-            target = self.target_func(**params)
-            self.register(x, target)
+        # try:
+        #     target = self._cache[_hashable(x)]
+        # except KeyError:
+        params = dict(zip(self._keys, x))
+        target = self.target_func(**params)
+        self.register(x, target)
         return target
 
     def random_sample(self):
@@ -222,10 +223,8 @@ class TargetSpace(object):
         """Get maximum target value found and corresponding parametes."""
         try:
             res = {
-                'target': self.target.max(),
-                'params': dict(
-                    zip(self.keys, self.params[self.target.argmax()])
-                )
+                "target": self.target.max(),
+                "params": dict(zip(self.keys, self.params[self.target.argmax()])),
             }
         except ValueError:
             res = {}
