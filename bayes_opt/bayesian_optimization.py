@@ -116,6 +116,16 @@ class BayesianOptimization(Observable):
 
         # Data structure containing the function to be optimized, the bounds of
         # its domain, and a record of the evaluations we have done so far
+
+        def make_bounds_dict(bounds: list):
+            d = {}
+            for id,el in enumerate(bounds):
+                d.update({"x"+str(id): el})
+            return d
+
+        if isinstance(pbounds, list):
+            pbounds = make_bounds_dict(pbounds)
+
         self._space = TargetSpace(f, pbounds, random_state)
 
         self._queue = Queue()
@@ -198,7 +208,8 @@ class BayesianOptimization(Observable):
             random_state=self._random_state,
         )
 
-        return self._space.array_to_params(suggestion)
+        # return self._space.array_to_params(suggestion)
+        return suggestion
 
     def _prime_queue(self, init_points):
         """Make sure there's something in the queue at the very beginning."""
